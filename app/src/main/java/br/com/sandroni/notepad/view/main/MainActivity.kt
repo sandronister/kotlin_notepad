@@ -5,10 +5,14 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
+import br.com.sandroni.notepad.NoteApp
 import br.com.sandroni.notepad.R
+import br.com.sandroni.notepad.model.Note
 
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -32,7 +36,7 @@ class MainActivity : AppCompatActivity() {
 
         mainViewModel.searchAll()
 
-        containerLoading.visibility = View.VISIBLE
+
 
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
@@ -42,11 +46,30 @@ class MainActivity : AppCompatActivity() {
 
     private fun registerObservers() {
         mainViewModel.isLoading.observe(this,isLoadingObserver)
+        mainViewModel.messageError.observe(this,messageErrorObserver)
+        mainViewModel.notes.observe(this,notesObserver)
+    }
+
+    private var notesObserver = Observer<List<Note>> {
+        rvNotas.adapter = MainListAdapter(
+            this,
+            it!!
+        )
+
+        rvNotas.layoutManager = LinearLayoutManager(this)
+    }
+
+    private var messageErrorObserver = Observer<String> {
+        if(it!!.isNotEmpty()){
+            Toast.makeText(this,it,Toast.LENGTH_LONG).show()
+        }
     }
 
     private var isLoadingObserver = Observer<Boolean>{
         if(it == true){
+            containerLoading.visibility = View.VISIBLE
         }else{
+            containerLoading.visibility = View.GONE
         }
     }
 

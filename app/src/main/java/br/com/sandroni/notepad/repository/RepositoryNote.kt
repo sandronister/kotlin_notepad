@@ -24,9 +24,9 @@ class RepositoryNote{
 
                     if(response.isSuccessful){
                         onComplete(response.body())
+                    }else {
+                        onError(Throwable("Erro ao buscar os dados"))
                     }
-
-                    onError(Throwable("Erro ao buscar os dados"))
                 }
             })
     }
